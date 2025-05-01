@@ -1,679 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Base Calculator</title>
     <style>
-        :root {
-            --primary-color: #4285f4;
-            --secondary-color: #34a853;
-            --error-color: #ea4335;
-            --text-color: #333;
-            --bg-color: #f5f5f5;
-            --card-color: #fff;
-            --border-color: #ddd;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-        }
+      :root {
+        --primary-color: #4285f4;
+        --secondary-color: #34a853;
+        --error-color: #ea4335;
+        --text-color: #333;
+        --bg-color: #f5f5f5;
+        --card-color: #fff;
+        --border-color: #ddd;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+      }
 
-        [data-theme="dark"] {
-            --primary-color: #8ab4f8;
-            --secondary-color: #81c995;
-            --error-color: #f28b82;
-            --text-color: #e8eaed;
-            --bg-color: #202124;
-            --card-color: #303134;
-            --border-color: #5f6368;
-            --shadow-color: rgba(0, 0, 0, 0.3);
-        }
+      [data-theme="dark"] {
+        --primary-color: #8ab4f8;
+        --secondary-color: #81c995;
+        --error-color: #f28b82;
+        --text-color: #e8eaed;
+        --bg-color: #202124;
+        --card-color: #303134;
+        --border-color: #5f6368;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+      }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
+      }
 
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        color: var(--primary-color);
+      }
+
+      .theme-toggle button {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .tab {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        color: var(--text-color);
+        font-weight: bold;
+      }
+
+      .tab.active {
+        border-bottom-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .calculator,
+      .converter,
+      .history-container {
+        background-color: var(--card-color);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        margin-bottom: 20px;
+      }
+
+      .base-selector,
+      .conversion-input {
+        margin-bottom: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .input-fields {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+      }
+
+      input,
+      select,
+      button {
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: var(--card-color);
+        color: var(--text-color);
+      }
+
+      input {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      select {
+        min-width: 80px;
+      }
+
+      button {
+        cursor: pointer;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .result-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .result {
+        flex: 1;
+        padding: 15px;
+        background-color: var(--bg-color);
+        border-radius: 4px;
+        min-height: 20px;
+      }
+
+      #copy-result {
+        padding: 10px 15px;
+        background-color: var(--secondary-color);
+      }
+
+      .digits-info {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        opacity: 0.8;
+      }
+
+      .conversion-result {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: var(--bg-color);
+        border-radius: 4px;
+      }
+
+      .history-container ul {
+        list-style: none;
+        margin-top: 15px;
+      }
+
+      .history-container li {
+        padding: 10px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .bitwise {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+          padding: 10px;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .input-fields,
+        .base-selector,
+        .conversion-input {
+          flex-direction: column;
+          align-items: stretch;
         }
 
-        h1 {
-            color: var(--primary-color);
-        }
-
-        .theme-toggle button {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .tab {
-            padding: 10px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            color: var(--text-color);
-            font-weight: bold;
-        }
-
-        .tab.active {
-            border-bottom-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .calculator, .converter, .history-container {
-            background-color: var(--card-color);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px var(--shadow-color);
-            margin-bottom: 20px;
-        }
-
-        .base-selector, .conversion-input {
-            margin-bottom: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .input-fields {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-
-        input, select, button {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: var(--card-color);
-            color: var(--text-color);
-        }
-
-        input {
-            flex: 1;
-            min-width: 120px;
-        }
-
+        input,
         select {
-            min-width: 80px;
+          width: 100%;
         }
+      }
 
-        button {
-            cursor: pointer;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            transition: background-color 0.2s;
-        }
+      .footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .result-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .result {
-            flex: 1;
-            padding: 15px;
-            background-color: var(--bg-color);
-            border-radius: 4px;
-            min-height: 20px;
-        }
-
-        #copy-result {
-            padding: 10px 15px;
-            background-color: var(--secondary-color);
-        }
-
-        .digits-info {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.8;
-        }
-
-        .conversion-result {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--bg-color);
-            border-radius: 4px;
-        }
-
-        .history-container ul {
-            list-style: none;
-            margin-top: 15px;
-        }
-
-        .history-container li {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .bitwise {
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .input-fields, .base-selector, .conversion-input {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            input, select {
-                width: 100%;
-            }
-        }
+      .footer a {
+        text-decoration: none;
+        color: var(--primary-color);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>Multi-Base Calculator</h1>
-            <div class="theme-toggle">
-                <button id="theme-btn">🌙 Dark Mode</button>
-            </div>
-        </header>
-
-        <div class="tabs">
-            <button class="tab active" data-tab="calculator">Calculator</button>
-            <button class="tab" data-tab="converter">Converter</button>
-            <button class="tab" data-tab="history">History</button>
+      <header>
+        <h1>Multi-Base Calculator</h1>
+        <div class="theme-toggle">
+          <button id="theme-btn">🌙</button>
         </div>
+      </header>
 
-        <div id="calculator" class="tab-content active">
-            <div class="calculator">
-                <div class="base-selector">
-                    <label for="base-selector">Select Base:</label>
-                    <select id="base-selector">
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="input-fields">
-                    <input type="text" id="operand1" placeholder="First number">
-                    <select id="operator">
-                        <option value="+">+</option>
-                        <option value="-">-</option>
-                        <option value="×">×</option>
-                        <option value="÷">÷</option>
-                        <option value="&" class="bitwise">AND (&)</option>
-                        <option value="|" class="bitwise">OR (|)</option>
-                        <option value="^" class="bitwise">XOR (^)</option>
-                        <option value="<<" class="bitwise">Left Shift (<<)</option>
-                        <option value=">>" class="bitwise">Right Shift (>>)</option>
-                    </select>
-                    <input type="text" id="operand2" placeholder="Second number">
-                </div>
-                
-                <div class="buttons">
-                    <button id="calculate">Calculate</button>
-                    <button id="clear-all">Clear All</button>
-                </div>
-                
-                <div class="result-container">
-                    <div class="result" id="result">Result will appear here</div>
-                    <button id="copy-result" title="Copy to clipboard">📋</button>
-                </div>
-                
-                <div class="digits-info" id="digits-info">
-                    Valid digits for base 10: 0-9
-                </div>
-            </div>
-        </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="calculator">Calculator</button>
+        <button class="tab" data-tab="converter">Converter</button>
+        <button class="tab" data-tab="history">History</button>
+      </div>
 
-        <div id="converter" class="tab-content">
-            <div class="converter">
-                <div class="conversion-input">
-                    <input type="text" id="number-to-convert" placeholder="Enter number">
-                    <label for="from-base">From Base:</label>
-                    <select id="from-base">
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                    <label for="to-base">To Base:</label>
-                    <select id="to-base">
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                    <button id="convert-btn">Convert</button>
-                </div>
-                <div class="conversion-result" id="conversion-result">
-                    Conversion result will appear here
-                </div>
-            </div>
-        </div>
+      <div id="calculator" class="tab-content active">
+        <div class="calculator">
+          <div class="base-selector">
+            <label for="base-selector">Select Base:</label>
+            <select id="base-selector">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
 
-        <div id="history" class="tab-content">
-            <div class="history-container">
-                <button id="clear-history">Clear History</button>
-                <ul id="history-list">
-                    <!-- History items will be added here -->
-                </ul>
-            </div>
+          <div class="input-fields">
+            <input type="text" id="operand1" placeholder="First number" />
+            <select id="operator">
+              <option value="+">+</option>
+              <option value="-">-</option>
+              <option value="×">×</option>
+              <option value="÷">÷</option>
+              <option value="&" class="bitwise">AND (&)</option>
+              <option value="|" class="bitwise">OR (|)</option>
+              <option value="^" class="bitwise">XOR (^)</option>
+              <option value="<<" class="bitwise">Left Shift (<<)</option>
+              <option value=">>" class="bitwise">Right Shift (>>)</option>
+            </select>
+            <input type="text" id="operand2" placeholder="Second number" />
+          </div>
+
+          <div class="buttons">
+            <button id="calculate">Calculate</button>
+            <button id="clear-all">Clear All</button>
+          </div>
+
+          <div class="result-container">
+            <div class="result" id="result">Result will appear here</div>
+            <button id="copy-result" title="Copy to clipboard">📋</button>
+          </div>
+
+          <div class="digits-info" id="digits-info">
+            Valid digits for base 10: 0-9
+          </div>
         </div>
+      </div>
+
+      <div id="converter" class="tab-content">
+        <div class="converter">
+          <div class="conversion-input">
+            <input
+              type="text"
+              id="number-to-convert"
+              placeholder="Enter number"
+            />
+            <label for="from-base">From Base:</label>
+            <select id="from-base">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+            <label for="to-base">To Base:</label>
+            <select id="to-base">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+            <button id="convert-btn">Convert</button>
+          </div>
+          <div class="conversion-result" id="conversion-result">
+            Conversion result will appear here
+          </div>
+        </div>
+      </div>
+
+      <div id="history" class="tab-content">
+        <div class="history-container">
+          <button id="clear-history">Clear History</button>
+          <ul id="history-list">
+            <!-- History items will be added here -->
+          </ul>
+        </div>
+      </div>
+
+      <section class="footer">
+        <p>Created by <a href="https://fb.com/jibeshsaha/">Jibesh Saha</a></p>
+      </section>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const themeBtn = document.getElementById('theme-btn');
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            // Calculator elements
-            const baseSelector = document.getElementById('base-selector');
-            const operand1 = document.getElementById('operand1');
-            const operand2 = document.getElementById('operand2');
-            const operator = document.getElementById('operator');
-            const calculateBtn = document.getElementById('calculate');
-            const clearAllBtn = document.getElementById('clear-all');
-            const resultDisplay = document.getElementById('result');
-            const copyResultBtn = document.getElementById('copy-result');
-            const digitsInfo = document.getElementById('digits-info');
-            
-            // Converter elements
-            const fromBase = document.getElementById('from-base');
-            const toBase = document.getElementById('to-base');
-            const numberToConvert = document.getElementById('number-to-convert');
-            const convertBtn = document.getElementById('convert-btn');
-            const conversionResult = document.getElementById('conversion-result');
-            
-            // History elements
-            const historyList = document.getElementById('history-list');
-            const clearHistoryBtn = document.getElementById('clear-history');
-            
-            // Theme toggle
-            themeBtn.addEventListener('click', function() {
-                document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-                themeBtn.textContent = document.body.dataset.theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-                localStorage.setItem('theme', document.body.dataset.theme);
+      document.addEventListener("DOMContentLoaded", function () {
+        // DOM Elements
+        const themeBtn = document.getElementById("theme-btn");
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        // Calculator elements
+        const baseSelector = document.getElementById("base-selector");
+        const operand1 = document.getElementById("operand1");
+        const operand2 = document.getElementById("operand2");
+        const operator = document.getElementById("operator");
+        const calculateBtn = document.getElementById("calculate");
+        const clearAllBtn = document.getElementById("clear-all");
+        const resultDisplay = document.getElementById("result");
+        const copyResultBtn = document.getElementById("copy-result");
+        const digitsInfo = document.getElementById("digits-info");
+
+        // Converter elements
+        const fromBase = document.getElementById("from-base");
+        const toBase = document.getElementById("to-base");
+        const numberToConvert = document.getElementById("number-to-convert");
+        const convertBtn = document.getElementById("convert-btn");
+        const conversionResult = document.getElementById("conversion-result");
+
+        // History elements
+        const historyList = document.getElementById("history-list");
+        const clearHistoryBtn = document.getElementById("clear-history");
+
+        // Theme toggle
+        themeBtn.addEventListener("click", function () {
+          document.body.dataset.theme =
+            document.body.dataset.theme === "dark" ? "light" : "dark";
+          themeBtn.textContent =
+            document.body.dataset.theme === "dark" ? "☀️" : "🌙";
+          localStorage.setItem("theme", document.body.dataset.theme);
+        });
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.body.dataset.theme = savedTheme;
+        themeBtn.textContent =
+          savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+
+        // Tab switching
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            tabs.forEach((t) => t.classList.remove("active"));
+            tabContents.forEach((c) => c.classList.remove("active"));
+
+            this.classList.add("active");
+            document.getElementById(this.dataset.tab).classList.add("active");
+          });
+        });
+
+        // Populate base selectors
+        function populateBaseSelectors(selectElement, defaultBase = 10) {
+          for (let i = 2; i <= 26; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i;
+            if (i === defaultBase) option.selected = true;
+            selectElement.appendChild(option);
+          }
+        }
+
+        populateBaseSelectors(baseSelector);
+        populateBaseSelectors(fromBase);
+        populateBaseSelectors(toBase, 16); // Default to base 16 for conversion
+
+        // Update bitwise operators visibility
+        function updateBitwiseOperators(base) {
+          const bitwiseOps = [2, 4, 8, 16];
+          const showBitwise = bitwiseOps.includes(base);
+
+          document.querySelectorAll(".bitwise").forEach((op) => {
+            op.style.display = showBitwise ? "block" : "none";
+          });
+        }
+
+        // Helper function to parse base 26 numbers (A=0, B=1, ..., Z=25)
+        function parseBase26(str) {
+          str = str.toUpperCase();
+          let result = 0;
+          for (let i = 0; i < str.length; i++) {
+            const c = str[i];
+            if (c === ".") continue; // skip decimal point
+            if (c < "A" || c > "Z") return NaN;
+            const val = c.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
+            result = result * 26 + val;
+          }
+          return result;
+        }
+
+        // Helper function to convert to base 26 string (A=0, B=1, ..., Z=25)
+        function toBase26(num) {
+          if (num === 0) return "A";
+          let str = "";
+          while (num > 0) {
+            const remainder = num % 26;
+            str = String.fromCharCode(65 + remainder) + str;
+            num = Math.floor(num / 26);
+          }
+          return str || "A";
+        }
+
+        // Update UI when base changes
+        baseSelector.addEventListener("change", function () {
+          const newBase = parseInt(this.value);
+          updateDigitsInfo(newBase);
+          updateBitwiseOperators(newBase);
+          clearInputs();
+        });
+
+        // Helper function to update valid digits information
+        function updateDigitsInfo(base) {
+          if (base === 26) {
+            digitsInfo.textContent =
+              "Valid digits for base 26: A-Z (A=0, B=1, ..., Z=25)";
+          } else {
+            let digits = "0-" + (base - 1 > 9 ? 9 : base - 1);
+            if (base > 10) {
+              digits += ", A-" + String.fromCharCode(65 + base - 11);
+            }
+            digitsInfo.textContent = `Valid digits for base ${base}: ${digits}`;
+          }
+        }
+
+        // Helper function to clear inputs
+        function clearInputs() {
+          operand1.value = "";
+          operand2.value = "";
+          resultDisplay.textContent = "Result will appear here";
+        }
+
+        // Clear all button
+        clearAllBtn.addEventListener("click", clearInputs);
+
+        // Copy result button
+        copyResultBtn.addEventListener("click", function () {
+          const resultText = resultDisplay.textContent.replace("Result: ", "");
+          if (resultText) {
+            navigator.clipboard.writeText(resultText).then(() => {
+              const originalText = copyResultBtn.textContent;
+              copyResultBtn.textContent = "✓ Copied!";
+              setTimeout(() => {
+                copyResultBtn.textContent = originalText;
+              }, 2000);
             });
-            
-            // Initialize theme
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.body.dataset.theme = savedTheme;
-            themeBtn.textContent = savedTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-            
-            // Tab switching
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(this.dataset.tab).classList.add('active');
-                });
+          }
+        });
+
+        // Calculate button handler
+        calculateBtn.addEventListener("click", function () {
+          const base = parseInt(baseSelector.value);
+          const num1Str = operand1.value.trim().toUpperCase();
+          const num2Str = operand2.value.trim().toUpperCase();
+          const op = operator.value;
+
+          if (!num1Str || !num2Str) {
+            resultDisplay.textContent = "Please enter both numbers";
+            return;
+          }
+
+          try {
+            const num1 =
+              base === 26 ? parseBase26(num1Str) : parseInt(num1Str, base);
+            const num2 =
+              base === 26 ? parseBase26(num2Str) : parseInt(num2Str, base);
+
+            if (isNaN(num1))
+              throw new Error(
+                `"${num1Str}" is not a valid base ${base} number`
+              );
+            if (isNaN(num2))
+              throw new Error(
+                `"${num2Str}" is not a valid base ${base} number`
+              );
+
+            let result;
+            let operationSymbol = op;
+
+            switch (op) {
+              case "+":
+                result = num1 + num2;
+                break;
+              case "-":
+                result = num1 - num2;
+                break;
+              case "×":
+                result = num1 * num2;
+                break;
+              case "÷":
+                if (num2 === 0) throw new Error("Division by zero");
+                result = num1 / num2;
+                break;
+              case "&":
+                result = num1 & num2;
+                operationSymbol = "AND";
+                break;
+              case "|":
+                result = num1 | num2;
+                operationSymbol = "OR";
+                break;
+              case "^":
+                result = num1 ^ num2;
+                operationSymbol = "XOR";
+                break;
+              case "<<":
+                result = num1 << num2;
+                operationSymbol = "Left Shift";
+                break;
+              case ">>":
+                result = num1 >> num2;
+                operationSymbol = "Right Shift";
+                break;
+            }
+
+            // Convert result back to the selected base
+            const wholeNumber = Math.floor(result);
+            const fractionalPart = result - wholeNumber;
+
+            let wholeStr =
+              base === 26
+                ? toBase26(wholeNumber)
+                : wholeNumber.toString(base).toUpperCase();
+
+            // Handle fractional part if exists
+            if (
+              fractionalPart !== 0 &&
+              op !== "<<" &&
+              op !== ">>" &&
+              op !== "&" &&
+              op !== "|" &&
+              op !== "^"
+            ) {
+              let fractionalStr = ".";
+              let temp = fractionalPart;
+              let precision = 8; // max decimal places
+
+              while (precision-- > 0 && temp !== 0) {
+                temp *= base;
+                const digit = Math.floor(temp);
+                fractionalStr +=
+                  base === 26
+                    ? toBase26(digit)
+                    : digit.toString(base).toUpperCase();
+                temp -= digit;
+              }
+
+              wholeStr += fractionalStr;
+            }
+
+            resultDisplay.textContent = `Result: ${wholeStr}`;
+
+            // Add to history
+            addToHistory({
+              type: "calculation",
+              base: base,
+              operation: `${num1Str} ${op} ${num2Str}`,
+              result: wholeStr,
             });
-            
-            // Populate base selectors
-            function populateBaseSelectors(selectElement, defaultBase = 10) {
-                for (let i = 2; i <= 26; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = i;
-                    if (i === defaultBase) option.selected = true;
-                    selectElement.appendChild(option);
-                }
+          } catch (error) {
+            resultDisplay.textContent = `Error: ${error.message}`;
+            resultDisplay.style.color = "var(--error-color)";
+            setTimeout(() => {
+              resultDisplay.style.color = "";
+            }, 2000);
+          }
+        });
+
+        // Conversion function
+        function convertNumber(numberStr, fromBase, toBase) {
+          // Handle fractional numbers
+          if (numberStr.includes(".")) {
+            const parts = numberStr.split(".");
+            const integerPart =
+              fromBase === 26
+                ? parseBase26(parts[0])
+                : parseInt(parts[0], fromBase);
+            if (isNaN(integerPart))
+              throw new Error(`Invalid integer part for base ${fromBase}`);
+
+            let fractionalPart = 0;
+            if (parts[1]) {
+              for (let i = 0; i < parts[1].length; i++) {
+                const digit =
+                  fromBase === 26
+                    ? parseBase26(parts[1][i])
+                    : parseInt(parts[1][i], fromBase);
+                if (isNaN(digit))
+                  throw new Error(
+                    `Invalid fractional digit for base ${fromBase}`
+                  );
+                fractionalPart += digit / Math.pow(fromBase, i + 1);
+              }
             }
-            
-            populateBaseSelectors(baseSelector);
-            populateBaseSelectors(fromBase);
-            populateBaseSelectors(toBase, 16); // Default to base 16 for conversion
-            
-            // Update bitwise operators visibility
-            function updateBitwiseOperators(base) {
-                const bitwiseOps = [2, 4, 8, 16];
-                const showBitwise = bitwiseOps.includes(base);
-                
-                document.querySelectorAll('.bitwise').forEach(op => {
-                    op.style.display = showBitwise ? 'block' : 'none';
-                });
+
+            const decimalValue = integerPart + fractionalPart;
+
+            // Convert decimal to target base
+            let convertedInteger =
+              toBase === 26
+                ? toBase26(Math.floor(decimalValue))
+                : Math.floor(decimalValue).toString(toBase).toUpperCase();
+            let convertedFraction = "";
+
+            if (fractionalPart > 0) {
+              convertedFraction = ".";
+              let temp = decimalValue - Math.floor(decimalValue);
+              let precision = 8; // max fractional digits
+
+              while (precision-- > 0 && temp > 0) {
+                temp *= toBase;
+                const digit = Math.floor(temp);
+                convertedFraction +=
+                  toBase === 26
+                    ? toBase26(digit)
+                    : digit.toString(toBase).toUpperCase();
+                temp -= digit;
+              }
             }
-            
-            // Helper function to parse base 26 numbers (A=0, B=1, ..., Z=25)
-            function parseBase26(str) {
-                str = str.toUpperCase();
-                let result = 0;
-                for (let i = 0; i < str.length; i++) {
-                    const c = str[i];
-                    if (c === '.') continue; // skip decimal point
-                    if (c < 'A' || c > 'Z') return NaN;
-                    const val = c.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
-                    result = result * 26 + val;
-                }
-                return result;
-            }
-            
-            // Helper function to convert to base 26 string (A=0, B=1, ..., Z=25)
-            function toBase26(num) {
-                if (num === 0) return 'A';
-                let str = '';
-                while (num > 0) {
-                    const remainder = num % 26;
-                    str = String.fromCharCode(65 + remainder) + str;
-                    num = Math.floor(num / 26);
-                }
-                return str || 'A';
-            }
-            
-            // Update UI when base changes
-            baseSelector.addEventListener('change', function() {
-                const newBase = parseInt(this.value);
-                updateDigitsInfo(newBase);
-                updateBitwiseOperators(newBase);
-                clearInputs();
+
+            return convertedInteger + convertedFraction;
+          } else {
+            // Handle integer numbers
+            const decimalValue =
+              fromBase === 26
+                ? parseBase26(numberStr)
+                : parseInt(numberStr, fromBase);
+            if (isNaN(decimalValue))
+              throw new Error(`Invalid number for base ${fromBase}`);
+            return toBase === 26
+              ? toBase26(decimalValue)
+              : decimalValue.toString(toBase).toUpperCase();
+          }
+        }
+
+        // Convert button handler
+        convertBtn.addEventListener("click", function () {
+          const numberStr = numberToConvert.value.trim().toUpperCase();
+          const fromBaseValue = parseInt(fromBase.value);
+          const toBaseValue = parseInt(toBase.value);
+
+          if (!numberStr) {
+            conversionResult.textContent = "Please enter a number to convert";
+            return;
+          }
+
+          try {
+            const result = convertNumber(numberStr, fromBaseValue, toBaseValue);
+            conversionResult.textContent = `${numberStr} (base ${fromBaseValue}) = ${result} (base ${toBaseValue})`;
+
+            // Add to history
+            addToHistory({
+              type: "conversion",
+              fromBase: fromBaseValue,
+              toBase: toBaseValue,
+              original: numberStr,
+              result: result,
             });
-            
-            // Helper function to update valid digits information
-            function updateDigitsInfo(base) {
-                if (base === 26) {
-                    digitsInfo.textContent = 'Valid digits for base 26: A-Z (A=0, B=1, ..., Z=25)';
-                } else {
-                    let digits = "0-" + (base - 1 > 9 ? 9 : base - 1);
-                    if (base > 10) {
-                        digits += ", A-" + String.fromCharCode(65 + base - 11);
-                    }
-                    digitsInfo.textContent = `Valid digits for base ${base}: ${digits}`;
-                }
-            }
-            
-            // Helper function to clear inputs
-            function clearInputs() {
-                operand1.value = "";
-                operand2.value = "";
-                resultDisplay.textContent = "Result will appear here";
-            }
-            
-            // Clear all button
-            clearAllBtn.addEventListener('click', clearInputs);
-            
-            // Copy result button
-            copyResultBtn.addEventListener('click', function() {
-                const resultText = resultDisplay.textContent.replace('Result: ', '');
-                if (resultText) {
-                    navigator.clipboard.writeText(resultText)
-                        .then(() => {
-                            const originalText = copyResultBtn.textContent;
-                            copyResultBtn.textContent = "✓ Copied!";
-                            setTimeout(() => {
-                                copyResultBtn.textContent = originalText;
-                            }, 2000);
-                        });
-                }
-            });
-            
-            // Calculate button handler
-            calculateBtn.addEventListener('click', function() {
-                const base = parseInt(baseSelector.value);
-                const num1Str = operand1.value.trim().toUpperCase();
-                const num2Str = operand2.value.trim().toUpperCase();
-                const op = operator.value;
-                
-                if (!num1Str || !num2Str) {
-                    resultDisplay.textContent = "Please enter both numbers";
-                    return;
-                }
-                
-                try {
-                    const num1 = base === 26 ? parseBase26(num1Str) : parseInt(num1Str, base);
-                    const num2 = base === 26 ? parseBase26(num2Str) : parseInt(num2Str, base);
-                    
-                    if (isNaN(num1)) throw new Error(`"${num1Str}" is not a valid base ${base} number`);
-                    if (isNaN(num2)) throw new Error(`"${num2Str}" is not a valid base ${base} number`);
-                    
-                    let result;
-                    let operationSymbol = op;
-                    
-                    switch (op) {
-                        case '+': 
-                            result = num1 + num2; 
-                            break;
-                        case '-': 
-                            result = num1 - num2; 
-                            break;
-                        case '×': 
-                            result = num1 * num2; 
-                            break;
-                        case '÷': 
-                            if (num2 === 0) throw new Error("Division by zero");
-                            result = num1 / num2; 
-                            break;
-                        case '&': 
-                            result = num1 & num2; 
-                            operationSymbol = 'AND'; 
-                            break;
-                        case '|': 
-                            result = num1 | num2; 
-                            operationSymbol = 'OR'; 
-                            break;
-                        case '^': 
-                            result = num1 ^ num2; 
-                            operationSymbol = 'XOR'; 
-                            break;
-                        case '<<': 
-                            result = num1 << num2; 
-                            operationSymbol = 'Left Shift'; 
-                            break;
-                        case '>>': 
-                            result = num1 >> num2; 
-                            operationSymbol = 'Right Shift'; 
-                            break;
-                    }
-                    
-                    // Convert result back to the selected base
-                    const wholeNumber = Math.floor(result);
-                    const fractionalPart = result - wholeNumber;
-                    
-                    let wholeStr = base === 26 ? toBase26(wholeNumber) : wholeNumber.toString(base).toUpperCase();
-                    
-                    // Handle fractional part if exists
-                    if (fractionalPart !== 0 && op !== '<<' && op !== '>>' && op !== '&' && op !== '|' && op !== '^') {
-                        let fractionalStr = ".";
-                        let temp = fractionalPart;
-                        let precision = 8; // max decimal places
-                        
-                        while (precision-- > 0 && temp !== 0) {
-                            temp *= base;
-                            const digit = Math.floor(temp);
-                            fractionalStr += base === 26 ? toBase26(digit) : digit.toString(base).toUpperCase();
-                            temp -= digit;
-                        }
-                        
-                        wholeStr += fractionalStr;
-                    }
-                    
-                    resultDisplay.textContent = `Result: ${wholeStr}`;
-                    
-                    // Add to history
-                    addToHistory({
-                        type: 'calculation',
-                        base: base,
-                        operation: `${num1Str} ${op} ${num2Str}`,
-                        result: wholeStr
-                    });
-                    
-                } catch (error) {
-                    resultDisplay.textContent = `Error: ${error.message}`;
-                    resultDisplay.style.color = 'var(--error-color)';
-                    setTimeout(() => {
-                        resultDisplay.style.color = '';
-                    }, 2000);
-                }
-            });
-            
-            // Conversion function
-            function convertNumber(numberStr, fromBase, toBase) {
-                // Handle fractional numbers
-                if (numberStr.includes('.')) {
-                    const parts = numberStr.split('.');
-                    const integerPart = fromBase === 26 ? parseBase26(parts[0]) : parseInt(parts[0], fromBase);
-                    if (isNaN(integerPart)) throw new Error(`Invalid integer part for base ${fromBase}`);
-                    
-                    let fractionalPart = 0;
-                    if (parts[1]) {
-                        for (let i = 0; i < parts[1].length; i++) {
-                            const digit = fromBase === 26 ? parseBase26(parts[1][i]) : parseInt(parts[1][i], fromBase);
-                            if (isNaN(digit)) throw new Error(`Invalid fractional digit for base ${fromBase}`);
-                            fractionalPart += digit / Math.pow(fromBase, i + 1);
-                        }
-                    }
-                    
-                    const decimalValue = integerPart + fractionalPart;
-                    
-                    // Convert decimal to target base
-                    let convertedInteger = toBase === 26 ? toBase26(Math.floor(decimalValue)) : Math.floor(decimalValue).toString(toBase).toUpperCase();
-                    let convertedFraction = '';
-                    
-                    if (fractionalPart > 0) {
-                        convertedFraction = '.';
-                        let temp = decimalValue - Math.floor(decimalValue);
-                        let precision = 8; // max fractional digits
-                        
-                        while (precision-- > 0 && temp > 0) {
-                            temp *= toBase;
-                            const digit = Math.floor(temp);
-                            convertedFraction += toBase === 26 ? toBase26(digit) : digit.toString(toBase).toUpperCase();
-                            temp -= digit;
-                        }
-                    }
-                    
-                    return convertedInteger + convertedFraction;
-                } else {
-                    // Handle integer numbers
-                    const decimalValue = fromBase === 26 ? parseBase26(numberStr) : parseInt(numberStr, fromBase);
-                    if (isNaN(decimalValue)) throw new Error(`Invalid number for base ${fromBase}`);
-                    return toBase === 26 ? toBase26(decimalValue) : decimalValue.toString(toBase).toUpperCase();
-                }
-            }
-            
-            // Convert button handler
-            convertBtn.addEventListener('click', function() {
-                const numberStr = numberToConvert.value.trim().toUpperCase();
-                const fromBaseValue = parseInt(fromBase.value);
-                const toBaseValue = parseInt(toBase.value);
-                
-                if (!numberStr) {
-                    conversionResult.textContent = "Please enter a number to convert";
-                    return;
-                }
-                
-                try {
-                    const result = convertNumber(numberStr, fromBaseValue, toBaseValue);
-                    conversionResult.textContent = `${numberStr} (base ${fromBaseValue}) = ${result} (base ${toBaseValue})`;
-                    
-                    // Add to history
-                    addToHistory({
-                        type: 'conversion',
-                        fromBase: fromBaseValue,
-                        toBase: toBaseValue,
-                        original: numberStr,
-                        result: result
-                    });
-                    
-                } catch (error) {
-                    conversionResult.textContent = `Error: ${error.message}`;
-                    conversionResult.style.color = 'var(--error-color)';
-                    setTimeout(() => {
-                        conversionResult.style.color = '';
-                    }, 2000);
-                }
-            });
-            
-            // History functions
-            function addToHistory(item) {
-                let history = JSON.parse(localStorage.getItem('calculatorHistory') || '[]');
-                history.unshift(item);
-                if (history.length > 50) history = history.slice(0, 50);
-                localStorage.setItem('calculatorHistory', JSON.stringify(history));
-                renderHistory();
-            }
-            
-            function renderHistory() {
-                const history = JSON.parse(localStorage.getItem('calculatorHistory') || '[]');
-                historyList.innerHTML = '';
-                
-                history.forEach(item => {
-                    const li = document.createElement('li');
-                    
-                    if (item.type === 'calculation') {
-                        li.innerHTML = `
+          } catch (error) {
+            conversionResult.textContent = `Error: ${error.message}`;
+            conversionResult.style.color = "var(--error-color)";
+            setTimeout(() => {
+              conversionResult.style.color = "";
+            }, 2000);
+          }
+        });
+
+        // History functions
+        function addToHistory(item) {
+          let history = JSON.parse(
+            localStorage.getItem("calculatorHistory") || "[]"
+          );
+          history.unshift(item);
+          if (history.length > 50) history = history.slice(0, 50);
+          localStorage.setItem("calculatorHistory", JSON.stringify(history));
+          renderHistory();
+        }
+
+        function renderHistory() {
+          const history = JSON.parse(
+            localStorage.getItem("calculatorHistory") || "[]"
+          );
+          historyList.innerHTML = "";
+
+          history.forEach((item) => {
+            const li = document.createElement("li");
+
+            if (item.type === "calculation") {
+              li.innerHTML = `
                             <span>${item.operation} (base ${item.base})</span>
                             <strong>= ${item.result}</strong>
                         `;
-                    } else if (item.type === 'conversion') {
-                        li.innerHTML = `
+            } else if (item.type === "conversion") {
+              li.innerHTML = `
                             <span>${item.original} (base ${item.fromBase}) → (base ${item.toBase})</span>
                             <strong>= ${item.result}</strong>
                         `;
-                    }
-                    
-                    historyList.appendChild(li);
-                });
             }
-            
-            // Clear history button
-            clearHistoryBtn.addEventListener('click', function() {
-                localStorage.removeItem('calculatorHistory');
-                renderHistory();
-            });
-            
-            // Initialize
-            updateDigitsInfo(10);
-            updateBitwiseOperators(10);
-            renderHistory();
+
+            historyList.appendChild(li);
+          });
+        }
+
+        // Clear history button
+        clearHistoryBtn.addEventListener("click", function () {
+          localStorage.removeItem("calculatorHistory");
+          renderHistory();
         });
+
+        // Initialize
+        updateDigitsInfo(10);
+        updateBitwiseOperators(10);
+        renderHistory();
+      });
     </script>
-</body>
+  </body>
 </html>
