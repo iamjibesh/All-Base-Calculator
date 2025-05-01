@@ -382,6 +382,32 @@
                 });
             }
             
+            // Helper function to parse base 26 numbers (A=0, B=1, ..., Z=25)
+            function parseBase26(str) {
+                str = str.toUpperCase();
+                let result = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const c = str[i];
+                    if (c === '.') continue; // skip decimal point
+                    if (c < 'A' || c > 'Z') return NaN;
+                    const val = c.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
+                    result = result * 26 + val;
+                }
+                return result;
+            }
+            
+            // Helper function to convert to base 26 string (A=0, B=1, ..., Z=25)
+            function toBase26(num) {
+                if (num === 0) return 'A';
+                let str = '';
+                while (num > 0) {
+                    const remainder = num % 26;
+                    str = String.fromCharCode(65 + remainder) + str;
+                    num = Math.floor(num / 26);
+                }
+                return str || 'A';
+            }
+            
             // Update UI when base changes
             baseSelector.addEventListener('change', function() {
                 const newBase = parseInt(this.value);
@@ -392,11 +418,15 @@
             
             // Helper function to update valid digits information
             function updateDigitsInfo(base) {
-                let digits = "0-" + (base - 1 > 9 ? 9 : base - 1);
-                if (base > 10) {
-                    digits += ", A-" + String.fromCharCode(65 + base - 11);
+                if (base === 26) {
+                    digitsInfo.textContent = 'Valid digits for base 26: A-Z (A=0, B=1, ..., Z=25)';
+                } else {
+                    let digits = "0-" + (base - 1 > 9 ? 9 : base - 1);
+                    if (base > 10) {
+                        digits += ", A-" + String.fromCharCode(65 + base - 11);
+                    }
+                    digitsInfo.textContent = `Valid digits for base ${base}: ${digits}`;
                 }
-                digitsInfo.textContent = `Valid digits for base ${base}: ${digits}`;
             }
             
             // Helper function to clear inputs
@@ -437,8 +467,8 @@
                 }
                 
                 try {
-                    const num1 = parseInt(num1Str, base);
-                    const num2 = parseInt(num2Str, base);
+                    const num1 = base === 26 ? parseBase26(num1Str) : parseInt(num1Str, base);
+                    const num2 = base === 26 ? parseBase26(num2Str) : parseInt(num2Str, base);
                     
                     if (isNaN(num1)) throw new Error(`"${num1Str}" is not a valid base ${base} number`);
                     if (isNaN(num2)) throw new Error(`"${num2Str}" is not a valid base ${base} number`);
@@ -486,7 +516,7 @@
                     const wholeNumber = Math.floor(result);
                     const fractionalPart = result - wholeNumber;
                     
-                    let wholeStr = wholeNumber.toString(base).toUpperCase();
+                    let wholeStr = base === 26 ? toBase26(wholeNumber) : wholeNumber.toString(base).toUpperCase();
                     
                     // Handle fractional part if exists
                     if (fractionalPart !== 0 && op !== '<<' && op !== '>>' && op !== '&' && op !== '|' && op !== '^') {
@@ -497,7 +527,7 @@
                         while (precision-- > 0 && temp !== 0) {
                             temp *= base;
                             const digit = Math.floor(temp);
-                            fractionalStr += digit.toString(base).toUpperCase();
+                            fractionalStr += base === 26 ? toBase26(digit) : digit.toString(base).toUpperCase();
                             temp -= digit;
                         }
                         
@@ -528,13 +558,13 @@
                 // Handle fractional numbers
                 if (numberStr.includes('.')) {
                     const parts = numberStr.split('.');
-                    const integerPart = parseInt(parts[0], fromBase);
+                    const integerPart = fromBase === 26 ? parseBase26(parts[0]) : parseInt(parts[0], fromBase);
                     if (isNaN(integerPart)) throw new Error(`Invalid integer part for base ${fromBase}`);
                     
                     let fractionalPart = 0;
                     if (parts[1]) {
                         for (let i = 0; i < parts[1].length; i++) {
-                            const digit = parseInt(parts[1][i], fromBase);
+                            const digit = fromBase === 26 ? parseBase26(parts[1][i]) : parseInt(parts[1][i], fromBase);
                             if (isNaN(digit)) throw new Error(`Invalid fractional digit for base ${fromBase}`);
                             fractionalPart += digit / Math.pow(fromBase, i + 1);
                         }
@@ -543,7 +573,7 @@
                     const decimalValue = integerPart + fractionalPart;
                     
                     // Convert decimal to target base
-                    let convertedInteger = Math.floor(decimalValue).toString(toBase).toUpperCase();
+                    let convertedInteger = toBase === 26 ? toBase26(Math.floor(decimalValue)) : Math.floor(decimalValue).toString(toBase).toUpperCase();
                     let convertedFraction = '';
                     
                     if (fractionalPart > 0) {
@@ -554,7 +584,7 @@
                         while (precision-- > 0 && temp > 0) {
                             temp *= toBase;
                             const digit = Math.floor(temp);
-                            convertedFraction += digit.toString(toBase).toUpperCase();
+                            convertedFraction += toBase === 26 ? toBase26(digit) : digit.toString(toBase).toUpperCase();
                             temp -= digit;
                         }
                     }
@@ -562,9 +592,9 @@
                     return convertedInteger + convertedFraction;
                 } else {
                     // Handle integer numbers
-                    const decimalValue = parseInt(numberStr, fromBase);
+                    const decimalValue = fromBase === 26 ? parseBase26(numberStr) : parseInt(numberStr, fromBase);
                     if (isNaN(decimalValue)) throw new Error(`Invalid number for base ${fromBase}`);
-                    return decimalValue.toString(toBase).toUpperCase();
+                    return toBase === 26 ? toBase26(decimalValue) : decimalValue.toString(toBase).toUpperCase();
                 }
             }
             
