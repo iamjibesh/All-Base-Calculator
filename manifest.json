@@ -1,6 +1,6 @@
 {
-  "name": "Multi-Base Calculator",
-  "short_name": "BaseCalc",
+  "name": "All-Base Calculator",
+  "short_name": "All-Base Calc",
   "description": "A modern glassmorphism calculator for converting and calculating across multiple number bases.",
   "start_url": "./index.html",
   "display": "standalone",
@@ -19,3 +19,4 @@
     }
   ]
 }
+
