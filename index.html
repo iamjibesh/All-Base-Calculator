@@ -1,207 +1,300 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Base Calculator</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#4285f4" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+
     <style>
+      /* LIGHT MODE VARIABLES - Fixed for high contrast and readability */
       :root {
-        --primary-color: #4285f4;
-        --secondary-color: #34a853;
-        --error-color: #ea4335;
-        --text-color: #333;
-        --bg-color: #f5f5f5;
-        --card-color: #fff;
-        --border-color: #ddd;
-        --shadow-color: rgba(0, 0, 0, 0.1);
+        --text-color: #2c3e50; /* Deep slate gray for readable text */
+        --glass-bg: rgba(255, 255, 255, 0.4); /* More opaque white frost */
+        --glass-border: rgba(255, 255, 255, 0.6);
+        --glass-shadow: rgba(0, 0, 0, 0.1);
+        --input-bg: rgba(255, 255, 255, 0.6);
+        --btn-bg: rgba(255, 255, 255, 0.7);
+        --btn-hover: rgba(255, 255, 255, 0.9);
+        --highlight: #d35400; /* A warm, dark accent color */
       }
 
       [data-theme="dark"] {
-        --primary-color: #8ab4f8;
-        --secondary-color: #81c995;
-        --error-color: #f28b82;
         --text-color: #e8eaed;
-        --bg-color: #202124;
-        --card-color: #303134;
-        --border-color: #5f6368;
-        --shadow-color: rgba(0, 0, 0, 0.3);
+        --glass-bg: rgba(0, 0, 0, 0.4);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-shadow: rgba(0, 0, 0, 0.5);
+        --input-bg: rgba(0, 0, 0, 0.3);
+        --btn-bg: rgba(0, 0, 0, 0.5);
+        --btn-hover: rgba(255, 255, 255, 0.2);
+        --highlight: #8ab4f8;
+      }
+
+      /* Updated Placeholders for better contrast in both modes */
+      input::placeholder {
+        color: rgba(44, 62, 80, 0.6); /* Dark gray placeholder for light mode */
+      }
+
+      [data-theme="dark"] input::placeholder {
+        color: rgba(232, 234, 237, 0.5); /* Light placeholder for dark mode */
+      }
+
+      /* Fix the dropdown options so they match the theme */
+      option {
+        background: #ffffff;
+        color: #2c3e50;
+      }
+
+      [data-theme="dark"] option {
+        background: #333333;
+        color: #ffffff;
       }
 
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-      }
-
-      body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        transition: background-color 0.3s, color 0.3s;
       }
 
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
+      /* Animated Liquid Background */
+      /* Static Gradient Background */
+      /* Static Warm Gradient Background */
+      /* Static Earthy Gradient Background */
+      body {
+        min-height: 100vh;
+        color: var(--text-color);
+        /* A soft, muted sand gradient */
+        background: linear-gradient(135deg, #eacda3 0%, #d6ae7b 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
         padding: 20px;
+        transition:
+          background 0.5s ease,
+          color 0.3s ease;
+      }
+
+      [data-theme="dark"] body {
+        /* A dark, warm charcoal brown */
+        background: linear-gradient(135deg, #2b1f1c 0%, #121212 100%);
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Glassmorphism Container */
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px var(--glass-shadow);
+        width: 100%;
+        max-width: 800px;
+        padding: 30px;
+        transition: all 0.3s ease;
       }
 
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
       }
 
       h1 {
-        color: var(--primary-color);
+        font-size: 1.8rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .theme-toggle button {
-        background: none;
-        border: none;
-        color: var(--primary-color);
+        background: var(--btn-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 1.2rem;
+        backdrop-filter: blur(4px);
+        transition: background 0.3s;
       }
 
       .tabs {
         display: flex;
-        margin-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
+        gap: 10px;
+        margin-bottom: 25px;
+        background: var(--input-bg);
+        padding: 5px;
+        border-radius: 12px;
       }
 
       .tab {
-        padding: 10px 20px;
-        background: none;
+        flex: 1;
+        padding: 12px;
+        background: transparent;
         border: none;
-        border-bottom: 3px solid transparent;
-        cursor: pointer;
+        border-radius: 8px;
         color: var(--text-color);
-        font-weight: bold;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
       }
 
       .tab.active {
-        border-bottom-color: var(--primary-color);
-        color: var(--primary-color);
+        background: var(--btn-bg);
+        box-shadow: 0 4px 12px var(--glass-shadow);
       }
 
       .tab-content {
         display: none;
+        animation: fadeIn 0.4s ease;
       }
 
       .tab-content.active {
         display: block;
       }
 
-      .calculator,
-      .converter,
-      .history-container {
-        background-color: var(--card-color);
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 2px 10px var(--shadow-color);
+      /* Mobile Tab Dropdown Styling */
+      .mobile-tabs {
+        display: none; /* Hidden on desktop */
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 25px;
+        background: var(--input-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-color);
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        outline: none;
+        backdrop-filter: blur(4px);
+        cursor: pointer;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Inputs & Buttons - Glass Style */
+      .input-group {
         margin-bottom: 20px;
-      }
-
-      .base-selector,
-      .conversion-input {
-        margin-bottom: 15px;
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-      }
-
-      .input-fields {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 15px;
+        gap: 15px;
         align-items: center;
       }
 
       input,
-      select,
-      button {
-        padding: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        background-color: var(--card-color);
-        color: var(--text-color);
-      }
-
-      input {
-        flex: 1;
-        min-width: 120px;
-      }
-
       select {
-        min-width: 80px;
-      }
-
-      button {
-        cursor: pointer;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        transition: background-color 0.2s;
-      }
-
-      button:hover {
-        background-color: var(--secondary-color);
-      }
-
-      .buttons {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
-
-      .result-container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .result {
-        flex: 1;
-        padding: 15px;
-        background-color: var(--bg-color);
-        border-radius: 4px;
-        min-height: 20px;
-      }
-
-      #copy-result {
-        padding: 10px 15px;
-        background-color: var(--secondary-color);
-      }
-
-      .digits-info {
-        margin-top: 15px;
-        font-size: 0.9rem;
+        padding: 12px 15px;
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        background: var(--input-bg);
         color: var(--text-color);
+        outline: none;
+        font-size: 1rem;
+        backdrop-filter: blur(4px);
+      }
+
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      [data-theme="dark"] input::placeholder {
+        color: rgba(232, 234, 237, 0.5);
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--highlight);
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+      }
+
+      option {
+        background: #333;
+        color: #fff;
+      }
+
+      button.action-btn {
+        padding: 12px 20px;
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        background: var(--btn-bg);
+        color: var(--text-color);
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+      }
+
+      button.action-btn:hover {
+        background: var(--btn-hover);
+        transform: translateY(-2px);
+      }
+
+      /* Results Area */
+      .result-box {
+        background: var(--input-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+
+      .history-list {
+        list-style: none;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .history-list li {
+        background: var(--input-bg);
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 0.9rem;
         opacity: 0.8;
       }
 
-      .conversion-result {
-        margin-top: 15px;
-        padding: 15px;
-        background-color: var(--bg-color);
-        border-radius: 4px;
-      }
-
-      .history-container ul {
-        list-style: none;
-        margin-top: 15px;
-      }
-
-      .history-container li {
-        padding: 10px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
+      .footer a {
+        color: var(--highlight);
+        text-decoration: none;
+        font-weight: bold;
       }
 
       .bitwise {
@@ -209,37 +302,26 @@
       }
 
       @media (max-width: 600px) {
-        .container {
-          padding: 10px;
-        }
-
-        .input-fields,
-        .base-selector,
-        .conversion-input {
+        .input-group {
           flex-direction: column;
           align-items: stretch;
         }
-
-        input,
-        select {
-          width: 100%;
+        .glass-panel {
+          padding: 20px;
         }
-      }
 
-      .footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .footer a {
-        text-decoration: none;
-        color: var(--secondary-color);
+        /* Hide the button tabs and show the dropdown */
+        .tabs {
+          display: none;
+        }
+        .mobile-tabs {
+          display: block;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="glass-panel">
       <header>
         <h1>Multi-Base Calculator</h1>
         <div class="theme-toggle">
@@ -253,94 +335,125 @@
         <button class="tab" data-tab="history">History</button>
       </div>
 
+      <select id="mobile-tabs" class="mobile-tabs">
+        <option value="calculator">Calculator</option>
+        <option value="converter">Converter</option>
+        <option value="history">History</option>
+      </select>
+
       <div id="calculator" class="tab-content active">
-        <div class="calculator">
-          <div class="base-selector">
-            <label for="base-selector">Select Base:</label>
-            <select id="base-selector">
-              <!-- Options will be populated by JavaScript -->
-            </select>
-          </div>
+        <div class="input-group">
+          <label for="base-selector">Base:</label>
+          <select id="base-selector"></select>
+          <span
+            id="digits-info"
+            style="font-size: 0.8rem; opacity: 0.8; margin-left: 10px"
+          ></span>
+        </div>
 
-          <div class="input-fields">
-            <input type="text" id="operand1" placeholder="First number" />
-            <select id="operator">
-              <option value="+">+</option>
-              <option value="-">-</option>
-              <option value="×">×</option>
-              <option value="÷">÷</option>
-              <option value="&" class="bitwise">AND (&)</option>
-              <option value="|" class="bitwise">OR (|)</option>
-              <option value="^" class="bitwise">XOR (^)</option>
-              <option value="<<" class="bitwise">Left Shift (<<)</option>
-              <option value=">>" class="bitwise">Right Shift (>>)</option>
-            </select>
+        <div class="input-group">
+          <input
+            type="text"
+            id="operand1"
+            placeholder="First number"
+            style="flex: 1"
+          />
+          <select id="operator">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="×">×</option>
+            <option value="÷">÷</option>
+            <option value="&" class="bitwise">AND (&)</option>
+            <option value="|" class="bitwise">OR (|)</option>
+            <option value="^" class="bitwise">XOR (^)</option>
+            <option value="<<" class="bitwise">Left Shift (<<)</option>
+            <option value=">>" class="bitwise">Right Shift (>>)</option>
+          </select>
+          <input
+            type="text"
+            id="operand2"
+            placeholder="Second number"
+            style="flex: 1"
+          />
+        </div>
 
-            <input type="text" id="operand2" placeholder="Second number" />
-          </div>
+        <div class="input-group">
+          <button class="action-btn" id="calculate" style="flex: 2">
+            Calculate
+          </button>
+          <button class="action-btn" id="clear-all" style="flex: 1">
+            Clear
+          </button>
+        </div>
 
-          <div class="buttons">
-            <button id="calculate">Calculate</button>
-            <button id="clear-all">Clear All</button>
-          </div>
-
-          <div class="result-container">
-            <div class="result" id="result">Result will appear here</div>
-            <button id="copy-result" title="Copy to clipboard">📋</button>
-          </div>
-
-          <div class="digits-info" id="digits-info">
-            Valid digits for base 10: 0-9
-          </div>
+        <div class="result-box">
+          <div id="result">Result will appear here</div>
+          <button class="action-btn" id="copy-result" title="Copy">📋</button>
         </div>
       </div>
 
       <div id="converter" class="tab-content">
-        <div class="converter">
-          <div class="conversion-input">
-            <input
-              type="text"
-              id="number-to-convert"
-              placeholder="Enter number"
-            />
-            <label for="from-base">From Base:</label>
-            <select id="from-base">
-              <!-- Options will be populated by JavaScript -->
-            </select>
-            <label for="to-base">To Base:</label>
-            <select id="to-base">
-              <!-- Options will be populated by JavaScript -->
-            </select>
-            <button id="convert-btn">Convert</button>
-          </div>
-          <div class="conversion-result" id="conversion-result">
-            Conversion result will appear here
-          </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="number-to-convert"
+            placeholder="Enter number"
+            style="flex: 1"
+          />
+        </div>
+        <div class="input-group">
+          <label>From:</label>
+          <select id="from-base" style="flex: 1"></select>
+          <label>To:</label>
+          <select id="to-base" style="flex: 1"></select>
+        </div>
+        <button class="action-btn" id="convert-btn" style="width: 100%">
+          Convert
+        </button>
+
+        <div class="result-box">
+          <div id="conversion-result">Conversion result will appear here</div>
         </div>
       </div>
 
       <div id="history" class="tab-content">
-        <div class="history-container">
-          <button id="clear-history">Clear History</button>
-          <ul id="history-list">
-            <!-- History items will be added here -->
-          </ul>
-        </div>
+        <button
+          class="action-btn"
+          id="clear-history"
+          style="width: 100%; margin-bottom: 15px"
+        >
+          Clear History
+        </button>
+        <ul class="history-list" id="history-list"></ul>
       </div>
 
-      <section class="footer">
-        <p>Created by <a href="https://fb.com/jibeshsaha/">Jibesh Saha</a></p>
-      </section>
+      <div class="footer">
+        <p>
+          Created by
+          <a href="https://fb.com/jibeshsaha/" target="_blank">Jibesh Saha</a>
+        </p>
+      </div>
     </div>
 
     <script>
+      // --- Service Worker Registration for PWA ---
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("sw.js")
+            .then((reg) => console.log("Service Worker registered"))
+            .catch((err) =>
+              console.log("Service Worker registration failed:", err),
+            );
+        });
+      }
+
+      // --- Original Calculator Logic ---
       document.addEventListener("DOMContentLoaded", function () {
-        // DOM Elements
         const themeBtn = document.getElementById("theme-btn");
         const tabs = document.querySelectorAll(".tab");
         const tabContents = document.querySelectorAll(".tab-content");
 
-        // Calculator elements
         const baseSelector = document.getElementById("base-selector");
         const operand1 = document.getElementById("operand1");
         const operand2 = document.getElementById("operand2");
@@ -351,16 +464,15 @@
         const copyResultBtn = document.getElementById("copy-result");
         const digitsInfo = document.getElementById("digits-info");
 
-        // Converter elements
         const fromBase = document.getElementById("from-base");
         const toBase = document.getElementById("to-base");
         const numberToConvert = document.getElementById("number-to-convert");
         const convertBtn = document.getElementById("convert-btn");
         const conversionResult = document.getElementById("conversion-result");
 
-        // History elements
         const historyList = document.getElementById("history-list");
         const clearHistoryBtn = document.getElementById("clear-history");
+        const mobileTabs = document.getElementById("mobile-tabs");
 
         // Theme toggle
         themeBtn.addEventListener("click", function () {
@@ -371,24 +483,37 @@
           localStorage.setItem("theme", document.body.dataset.theme);
         });
 
-        // Initialize theme
         const savedTheme = localStorage.getItem("theme") || "light";
         document.body.dataset.theme = savedTheme;
-        themeBtn.textContent =
-          savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+        themeBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
 
-        // Tab switching
+        // Tabs
         tabs.forEach((tab) => {
           tab.addEventListener("click", function () {
             tabs.forEach((t) => t.classList.remove("active"));
             tabContents.forEach((c) => c.classList.remove("active"));
-
             this.classList.add("active");
             document.getElementById(this.dataset.tab).classList.add("active");
           });
         });
 
-        // Populate base selectors
+        // New Mobile Dropdown Logic
+        mobileTabs.addEventListener("change", function () {
+          // Hide all contents
+          tabContents.forEach((c) => c.classList.remove("active"));
+          // Remove active class from desktop tabs
+          tabs.forEach((t) => t.classList.remove("active"));
+
+          // Show the selected content
+          const targetTab = this.value;
+          document.getElementById(targetTab).classList.add("active");
+
+          // Keep desktop tabs in sync
+          document
+            .querySelector(`.tab[data-tab="${targetTab}"]`)
+            .classList.add("active");
+        });
+
         function populateBaseSelectors(selectElement, defaultBase = 10) {
           for (let i = 2; i <= 26; i++) {
             const option = document.createElement("option");
@@ -401,101 +526,81 @@
 
         populateBaseSelectors(baseSelector);
         populateBaseSelectors(fromBase);
-        populateBaseSelectors(toBase, 16); // Default to base 16 for conversion
+        populateBaseSelectors(toBase, 16);
 
-        // Update bitwise operators visibility
         function updateBitwiseOperators(base) {
-          const bitwiseOps = [2, 4, 8, 16];
-          const showBitwise = bitwiseOps.includes(base);
-
+          const showBitwise = [2, 4, 8, 16].includes(base);
           document.querySelectorAll(".bitwise").forEach((op) => {
             op.style.display = showBitwise ? "block" : "none";
           });
         }
 
-        // Helper function to parse base 26 numbers (A=0, B=1, ..., Z=25)
         function parseBase26(str) {
           str = str.toUpperCase();
           let result = 0;
           for (let i = 0; i < str.length; i++) {
             const c = str[i];
-            if (c === ".") continue; // skip decimal point
+            if (c === ".") continue;
             if (c < "A" || c > "Z") return NaN;
-            const val = c.charCodeAt(0) - 65; // A=0, B=1, ..., Z=25
-            result = result * 26 + val;
+            result = result * 26 + (c.charCodeAt(0) - 65);
           }
           return result;
         }
 
-        // Helper function to convert to base 26 string (A=0, B=1, ..., Z=25)
         function toBase26(num) {
           if (num === 0) return "A";
           let str = "";
           while (num > 0) {
-            const remainder = num % 26;
-            str = String.fromCharCode(65 + remainder) + str;
+            str = String.fromCharCode(65 + (num % 26)) + str;
             num = Math.floor(num / 26);
           }
           return str || "A";
         }
 
-        // Update UI when base changes
         baseSelector.addEventListener("change", function () {
           const newBase = parseInt(this.value);
           updateDigitsInfo(newBase);
           updateBitwiseOperators(newBase);
-          clearInputs();
-        });
-
-        // Helper function to update valid digits information
-        function updateDigitsInfo(base) {
-          if (base === 26) {
-            digitsInfo.textContent =
-              "Valid digits for base 26: A-Z (A=0, B=1, ..., Z=25)";
-          } else {
-            let digits = "0-" + (base - 1 > 9 ? 9 : base - 1);
-            if (base > 10) {
-              digits += ", A-" + String.fromCharCode(65 + base - 11);
-            }
-            digitsInfo.textContent = `Valid digits for base ${base}: ${digits}`;
-          }
-        }
-
-        // Helper function to clear inputs
-        function clearInputs() {
           operand1.value = "";
           operand2.value = "";
           resultDisplay.textContent = "Result will appear here";
+        });
+
+        function updateDigitsInfo(base) {
+          if (base === 26) {
+            digitsInfo.textContent = "(A-Z)";
+          } else {
+            let digits = "0-" + Math.min(base - 1, 9);
+            if (base > 10)
+              digits += ", A-" + String.fromCharCode(65 + base - 11);
+            digitsInfo.textContent = `(${digits})`;
+          }
         }
 
-        // Clear all button
-        clearAllBtn.addEventListener("click", clearInputs);
+        clearAllBtn.addEventListener("click", () => {
+          operand1.value = "";
+          operand2.value = "";
+          resultDisplay.textContent = "Result will appear here";
+        });
 
-        // Copy result button
-        copyResultBtn.addEventListener("click", function () {
-          const resultText = resultDisplay.textContent.replace("Result: ", "");
-          if (resultText) {
-            navigator.clipboard.writeText(resultText).then(() => {
-              const originalText = copyResultBtn.textContent;
-              copyResultBtn.textContent = "✓ Copied!";
-              setTimeout(() => {
-                copyResultBtn.textContent = originalText;
-              }, 2000);
+        copyResultBtn.addEventListener("click", () => {
+          const text = resultDisplay.textContent.replace("Result: ", "");
+          if (text && text !== "Result will appear here") {
+            navigator.clipboard.writeText(text).then(() => {
+              copyResultBtn.textContent = "✓";
+              setTimeout(() => (copyResultBtn.textContent = "📋"), 2000);
             });
           }
         });
 
-        // Calculate button handler
         calculateBtn.addEventListener("click", function () {
           const base = parseInt(baseSelector.value);
           const num1Str = operand1.value.trim().toUpperCase();
           const num2Str = operand2.value.trim().toUpperCase();
           const op = operator.value;
 
-          if (!num1Str || !num2Str) {
-            resultDisplay.textContent = "Please enter both numbers";
-            return;
-          }
+          if (!num1Str || !num2Str)
+            return (resultDisplay.textContent = "Enter both numbers");
 
           try {
             const num1 =
@@ -503,18 +608,10 @@
             const num2 =
               base === 26 ? parseBase26(num2Str) : parseInt(num2Str, base);
 
-            if (isNaN(num1))
-              throw new Error(
-                `"${num1Str}" is not a valid base ${base} number`
-              );
-            if (isNaN(num2))
-              throw new Error(
-                `"${num2Str}" is not a valid base ${base} number`
-              );
+            if (isNaN(num1) || isNaN(num2))
+              throw new Error("Invalid number for this base");
 
             let result;
-            let operationSymbol = op;
-
             switch (op) {
               case "+":
                 result = num1 + num2;
@@ -526,226 +623,106 @@
                 result = num1 * num2;
                 break;
               case "÷":
-                if (num2 === 0) throw new Error("Division by zero");
+                if (num2 === 0) throw new Error("Div by zero");
                 result = num1 / num2;
                 break;
               case "&":
                 result = num1 & num2;
-                operationSymbol = "AND";
                 break;
               case "|":
                 result = num1 | num2;
-                operationSymbol = "OR";
                 break;
               case "^":
                 result = num1 ^ num2;
-                operationSymbol = "XOR";
                 break;
               case "<<":
                 result = num1 << num2;
-                operationSymbol = "Left Shift";
                 break;
               case ">>":
                 result = num1 >> num2;
-                operationSymbol = "Right Shift";
                 break;
             }
 
-            // Convert result back to the selected base
             const wholeNumber = Math.floor(result);
-            const fractionalPart = result - wholeNumber;
-
             let wholeStr =
               base === 26
                 ? toBase26(wholeNumber)
                 : wholeNumber.toString(base).toUpperCase();
 
-            // Handle fractional part if exists
-            if (
-              fractionalPart !== 0 &&
-              op !== "<<" &&
-              op !== ">>" &&
-              op !== "&" &&
-              op !== "|" &&
-              op !== "^"
-            ) {
-              let fractionalStr = ".";
-              let temp = fractionalPart;
-              let precision = 8; // max decimal places
-
-              while (precision-- > 0 && temp !== 0) {
-                temp *= base;
-                const digit = Math.floor(temp);
-                fractionalStr +=
-                  base === 26
-                    ? toBase26(digit)
-                    : digit.toString(base).toUpperCase();
-                temp -= digit;
-              }
-
-              wholeStr += fractionalStr;
-            }
-
             resultDisplay.textContent = `Result: ${wholeStr}`;
-
-            // Add to history
             addToHistory({
               type: "calculation",
-              base: base,
+              base,
               operation: `${num1Str} ${op} ${num2Str}`,
               result: wholeStr,
             });
           } catch (error) {
             resultDisplay.textContent = `Error: ${error.message}`;
-            resultDisplay.style.color = "var(--error-color)";
-            setTimeout(() => {
-              resultDisplay.style.color = "";
-            }, 2000);
           }
         });
 
-        // Conversion function
         function convertNumber(numberStr, fromBase, toBase) {
-          // Handle fractional numbers
-          if (numberStr.includes(".")) {
-            const parts = numberStr.split(".");
-            const integerPart =
-              fromBase === 26
-                ? parseBase26(parts[0])
-                : parseInt(parts[0], fromBase);
-            if (isNaN(integerPart))
-              throw new Error(`Invalid integer part for base ${fromBase}`);
-
-            let fractionalPart = 0;
-            if (parts[1]) {
-              for (let i = 0; i < parts[1].length; i++) {
-                const digit =
-                  fromBase === 26
-                    ? parseBase26(parts[1][i])
-                    : parseInt(parts[1][i], fromBase);
-                if (isNaN(digit))
-                  throw new Error(
-                    `Invalid fractional digit for base ${fromBase}`
-                  );
-                fractionalPart += digit / Math.pow(fromBase, i + 1);
-              }
-            }
-
-            const decimalValue = integerPart + fractionalPart;
-
-            // Convert decimal to target base
-            let convertedInteger =
-              toBase === 26
-                ? toBase26(Math.floor(decimalValue))
-                : Math.floor(decimalValue).toString(toBase).toUpperCase();
-            let convertedFraction = "";
-
-            if (fractionalPart > 0) {
-              convertedFraction = ".";
-              let temp = decimalValue - Math.floor(decimalValue);
-              let precision = 8; // max fractional digits
-
-              while (precision-- > 0 && temp > 0) {
-                temp *= toBase;
-                const digit = Math.floor(temp);
-                convertedFraction +=
-                  toBase === 26
-                    ? toBase26(digit)
-                    : digit.toString(toBase).toUpperCase();
-                temp -= digit;
-              }
-            }
-
-            return convertedInteger + convertedFraction;
-          } else {
-            // Handle integer numbers
-            const decimalValue =
-              fromBase === 26
-                ? parseBase26(numberStr)
-                : parseInt(numberStr, fromBase);
-            if (isNaN(decimalValue))
-              throw new Error(`Invalid number for base ${fromBase}`);
-            return toBase === 26
-              ? toBase26(decimalValue)
-              : decimalValue.toString(toBase).toUpperCase();
-          }
+          const decimalValue =
+            fromBase === 26
+              ? parseBase26(numberStr)
+              : parseInt(numberStr, fromBase);
+          if (isNaN(decimalValue)) throw new Error(`Invalid base ${fromBase}`);
+          return toBase === 26
+            ? toBase26(decimalValue)
+            : decimalValue.toString(toBase).toUpperCase();
         }
 
-        // Convert button handler
         convertBtn.addEventListener("click", function () {
-          const numberStr = numberToConvert.value.trim().toUpperCase();
-          const fromBaseValue = parseInt(fromBase.value);
-          const toBaseValue = parseInt(toBase.value);
+          const numStr = numberToConvert.value.trim().toUpperCase();
+          const fB = parseInt(fromBase.value);
+          const tB = parseInt(toBase.value);
 
-          if (!numberStr) {
-            conversionResult.textContent = "Please enter a number to convert";
-            return;
-          }
+          if (!numStr) return (conversionResult.textContent = "Enter a number");
 
           try {
-            const result = convertNumber(numberStr, fromBaseValue, toBaseValue);
-            conversionResult.textContent = `${numberStr} (base ${fromBaseValue}) = ${result} (base ${toBaseValue})`;
-
-            // Add to history
+            const res = convertNumber(numStr, fB, tB);
+            conversionResult.textContent = `${res} (Base ${tB})`;
             addToHistory({
               type: "conversion",
-              fromBase: fromBaseValue,
-              toBase: toBaseValue,
-              original: numberStr,
-              result: result,
+              fromBase: fB,
+              toBase: tB,
+              original: numStr,
+              result: res,
             });
           } catch (error) {
             conversionResult.textContent = `Error: ${error.message}`;
-            conversionResult.style.color = "var(--error-color)";
-            setTimeout(() => {
-              conversionResult.style.color = "";
-            }, 2000);
           }
         });
 
-        // History functions
         function addToHistory(item) {
-          let history = JSON.parse(
-            localStorage.getItem("calculatorHistory") || "[]"
-          );
+          let history = JSON.parse(localStorage.getItem("calcHistory") || "[]");
           history.unshift(item);
-          if (history.length > 50) history = history.slice(0, 50);
-          localStorage.setItem("calculatorHistory", JSON.stringify(history));
+          if (history.length > 30) history = history.slice(0, 30);
+          localStorage.setItem("calcHistory", JSON.stringify(history));
           renderHistory();
         }
 
         function renderHistory() {
           const history = JSON.parse(
-            localStorage.getItem("calculatorHistory") || "[]"
+            localStorage.getItem("calcHistory") || "[]",
           );
           historyList.innerHTML = "";
-
           history.forEach((item) => {
             const li = document.createElement("li");
-
             if (item.type === "calculation") {
-              li.innerHTML = `
-                            <span>${item.operation} (base ${item.base})</span>
-                            <strong>= ${item.result}</strong>
-                        `;
-            } else if (item.type === "conversion") {
-              li.innerHTML = `
-                            <span>${item.original} (base ${item.fromBase}) → (base ${item.toBase})</span>
-                            <strong>= ${item.result}</strong>
-                        `;
+              li.innerHTML = `<span>${item.operation} <small>(b${item.base})</small></span><strong>= ${item.result}</strong>`;
+            } else {
+              li.innerHTML = `<span>${item.original} <small>(b${item.fromBase}→b${item.toBase})</small></span><strong>= ${item.result}</strong>`;
             }
-
             historyList.appendChild(li);
           });
         }
 
-        // Clear history button
-        clearHistoryBtn.addEventListener("click", function () {
-          localStorage.removeItem("calculatorHistory");
+        clearHistoryBtn.addEventListener("click", () => {
+          localStorage.removeItem("calcHistory");
           renderHistory();
         });
 
-        // Initialize
         updateDigitsInfo(10);
         updateBitwiseOperators(10);
         renderHistory();
