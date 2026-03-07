@@ -34,11 +34,16 @@
 
       /* Updated Placeholders for better contrast in both modes */
       input::placeholder {
-        color: rgba(44, 62, 80, 0.6); /* Dark gray placeholder for light mode */
+        color: rgba(
+          44,
+          62,
+          80,
+          0.8
+        ) !important; /* Dark slate, slightly more opaque */
       }
 
       [data-theme="dark"] input::placeholder {
-        color: rgba(232, 234, 237, 0.5); /* Light placeholder for dark mode */
+        color: rgba(232, 234, 237, 0.6) !important; /* Light gray */
       }
 
       /* Fix the dropdown options so they match the theme */
