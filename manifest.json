@@ -1,11 +1,11 @@
 {
   "name": "Multi-Base Calculator",
   "short_name": "BaseCalc",
-  "description": "Calculate and convert across multiple number bases.",
+  "description": "A modern glassmorphism calculator for converting and calculating across multiple number bases.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#23a6d5",
-  "theme_color": "#4285f4",
+  "background_color": "#eacda3",
+  "theme_color": "#d35400",
   "icons": [
     {
       "src": "icon-192.png",
